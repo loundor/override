@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <sys/prctl.h>
+#include <sys/types.h>
+
+int main() {
+	pid_t	child;
+	char	s[128];
+	long	ptret = 0;
+	int		status = 0;
+
+	child = fork();
+	memset(s, 0, 128);
+	if (child == 0) {
+		prctl(PR_SET_PDEATHSIG, SIGHUP);
+		ptrace(PT_TRACEME, 0, NULL, NULL);
+		puts("Give me some shellcode, k");
+		gets(s);
+		return (0);
+	}
+	while (1) {
+		wait(&status);
+		if (WIFEXITED(status) || (_WSTATUS(status) + 1) / 2 > 0) {
+			puts("child is exiting...");
+			return (0);
+		}
+		ptret = ptrace(PT_READ_U, child, 44, NULL);
+		if (ptret == 11) {
+			puts("no exec() for you");
+			kill(child, SIGKILL);
+			return (0);
+		}
+	}
+	return (0);
+}

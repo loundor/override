@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int		decrypt(int val)
+{
+	char	str[] = "Q}|u`sfg~sf{}|a3";
+	int		len = strlen(str);
+
+	for	(int i = 0; i < len; i++)
+		*(str + i) = val ^ *(str + i);
+	if (strcmp(str, "Congratulations!") == 0)
+		return (system("/bin/sh"));
+	else
+		return (printf("\nInvalid Password"));
+}
+
+int		test(int passwd, int leet)
+{
+	switch (leet - passwd) {
+		case 1: {
+			decrypt(1);
+			break;
+		}
+		case 2: {
+			decrypt(2);
+			break;
+		}
+		case 3: {
+			decrypt(3);
+			break;
+		}
+		case 4: {
+			decrypt(4);
+			break;
+		}
+		case 5: {
+			decrypt(5);
+			break;
+		}
+		case 6: {
+			decrypt(6);
+			break;
+		}
+		case 7: {
+			decrypt(7);
+			break;
+		}
+		case 8: {
+			decrypt(8);
+			break;
+		}
+		case 9: {
+			decrypt(9);
+			break;
+		}
+		case 16: {
+			decrypt(16);
+			break;
+		}
+		case 17: {
+			decrypt(17);
+			break;
+		}
+		case 18: {
+			decrypt(18);
+			break;
+		}
+		case 19: {
+			decrypt(19);
+			break;
+		}
+		case 20: {
+			decrypt(20);
+			break;
+		}
+		case 21: {
+			decrypt(21);
+			break;
+		}
+		default: decrypt(rand());
+	}
+}
+
+int	main() {
+	int		passwd;
+
+	srand(time(NULL));
+	puts("***********************************");
+	puts("*\t\tlevel03\t\t**");
+	puts("***********************************");
+	printf("Password:");
+	scanf("%d", passwd);
+	test(passwd, 322424845);
+	return (0);
+}

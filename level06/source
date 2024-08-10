@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/ptrace.h>
+
+#define ECX ((long long int)(*(login + i) ^ key))
+#define HIDWORD ((ECX * 0x88233b2b) >> 32)
+
+int auth(char *login, unsigned int serial) {
+	int		len;
+	int		key;
+	int		i;
+
+	*(login + strcspn(login, "\n")) = 0;
+	len = strlen(login);
+	if (len < 6)
+		return (1);
+	if (ptrace(PT_TRACE_ME, 1, 0, 0) == -1) {
+		puts("\033[32m.---------------------------.");
+		puts("\033[31m| !! TAMPERING DETECTED !! |");
+		puts("\033[32m'---------------------------'");
+		return (1);
+	}
+	key = (*(login + 3) ^ 0x1337) + 0x5eeded;
+	i = 0;
+	while (i < len) {
+		if (*(login + i) < 32)
+			return (1);
+		key = key + (ECX - ((ECX - HIDWORD >> 1) + HIDWORD >> 10) * 1337);
+		i++;
+	}
+	if (serial == key)
+		return (0);
+	return (1);
+}
+
+int main(int ac, char **av) {
+	char			login[32];
+	unsigned int	serial;
+
+	puts("***********************************");
+	puts("*\t\tlevel06\t\t  *");
+	puts("***********************************");
+	printf("-> Enter Login: ");
+	fgets(login, 32, stdin);
+	puts("***********************************");
+	puts("***** NEW ACCOUNT DETECTED ********");
+	puts("***********************************");
+	printf("-> Enter Serial: ");
+	scanf("%u", serial);
+	if (auth(login, serial) == 0) {
+		puts("Authenticated!");
+		system("/bin/sh");
+		return (0);
+	}
+	return (1);
+}

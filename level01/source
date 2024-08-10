@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+char	user_name[99];
+
+int	verify_user_name(){
+	puts("verifying username....\n");
+	return (memcmp(user_name, "dat_wil", 7) != 0 ? -1 : 0);
+}
+
+int verify_user_pass(char *user_pass) {
+	return (memcmp(user_pass, "admin", 5) != 0 ? -1 : 0);
+}
+
+int	main() {
+	char	user_pass[64];
+	int		pass;
+
+	memset(user_pass, 0, 64);
+	puts("********* ADMIN LOGIN PROMPT *********");
+	printf("Enter Username: ");
+	fgets(user_name, 256, stdin);
+	if (verify_user_name() != 0) {
+		puts("nope, incorrect username...\n");
+		return (1);
+	}
+	puts("Enter Password: ");
+	fgets(user_pass, 100, stdin);
+	pass = verify_user_pass(user_pass);
+	if (pass != 0 && pass == 0)
+		return (0);
+	else {
+		puts("nope, incorrect password...\n");
+		return (1);
+	}
+	return (0);
+}
