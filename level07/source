@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+
+void clear_stdin() {
+	char	c;
+
+	while (1) {
+		c = getchar();
+		if (c == '\n' || c == -1)
+			break;
+	}
+}
+
+unsigned int get_unum() {
+	unsigned int	unum;
+
+	fflush(stdout);
+	scanf("%u", &unum);
+	clear_stdin();
+	return (unum);
+}
+
+int store_number(int *tab) {
+	unsigned int	number;
+	unsigned int	index;
+
+	printf(" Number: ");
+	number = get_unum();
+	printf(" Index: ");
+	index = get_unum();
+	if (index % 3 != 0 && (number < 0xB7000000 || number >= 0xB8000000)) {
+		tab[index] = number;
+		return (0);
+	}
+	else {
+		puts(" *** ERROR! ***");
+		puts("   This index is reserved for wil!");
+		puts(" *** ERROR! ***");
+		return (1);
+	}
+}
+
+int read_number(int *tab) {
+	unsigned int	index;
+
+	printf(" Index: ");
+	index = get_unum();
+	printf(" Number at data[%u] is %u\n", index, tab[index]);
+	return (0);
+}
+
+int main(int ac, char **av, char **env) {
+	char	*str;
+	int		tab[100];
+	char	input[20];
+	int		res;
+
+	memset(tab, 0, 100 * sizeof(*tab));
+	str = *av;
+	while (str) {
+		memset(str, 0, strlen(str));
+		str++;
+	}
+	str = *env;
+	while (str) {
+		memset(str, 0, strlen(str));
+		str++;
+	}
+	puts("----------------------------------------------------\n  Welcome to wil's crappy number storage service!   \n----------------------------------------------------\n Commands:                                          \n    store - store a number into the data sto…");
+	while (1) {
+		res = 1;
+		printf("Input command: ");
+		fgets(input, 20, stdin);
+		*(input + strlen(input)) = 0;
+		if (strncmp(input, "store", 5) == 0)
+			res = store_number(tab);
+		if (strncmp(input, "read", 4) == 0)
+			res = read_number(tab);
+		if (strncmp(input, "quit", 4) == 0)
+			return (0);
+		if (res == 0)
+			printf(" Completed %s command successfully\n", input);
+		else
+			printf(" Failed to do %s command\n", input);
+		memset(input, 0, 20);
+	}
+}
